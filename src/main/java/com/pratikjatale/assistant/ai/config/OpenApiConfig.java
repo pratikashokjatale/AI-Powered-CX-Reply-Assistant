@@ -15,10 +15,14 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI cxReplyAssistantOpenAPI() {
+
         return new OpenAPI()
                 .info(new Info()
                         .title("AI-Powered CX Reply Assistant API")
-                        .description("Production-ready REST API for AI-assisted customer experience operations, multi-brand knowledge base retrieval, and intelligent guardrail verification.")
+                        .description(
+                                "Production-ready REST API for AI-assisted customer experience operations, " +
+                                "multi-brand knowledge base retrieval, and intelligent guardrail verification."
+                        )
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("Pratik Jatale")
@@ -27,8 +31,9 @@ public class OpenApiConfig {
                                 .name("Apache 2.0")
                                 .url("https://springdoc.org")))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Local Development Server"),
-                        new Server().url("https://api.cx-assistant.production.com").description("Production Server")
+                        new Server()
+                                .url("http://136.114.8.75:8081")
+                                .description("Production Server")
                 ));
     }
 }
