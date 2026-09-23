@@ -1,26 +1,34 @@
-# Stage 1: Build the Spring Boot application
-FROM maven:3.9.6-eclipse-temurin-17 AS builder
+# =========================
+# Stage 1: Build
+# =========================
+FROM maven:3.9.11-eclipse-temurin-21 AS builder
+
 WORKDIR /app
+
+# Copy Maven configuration first for better Docker layer caching
 COPY pom.xml .
+
+RUN mvn dependency:go-offline -B
+
+# Copy source code
 COPY src ./src
+
+# Build application
 RUN mvn clean package -DskipTests
 
-# Stage 2: Production Runtime image
-FROM eclipse-temurin:17-jre-jammy
+
+# =========================
+# Stage 2: Run
+# =========================
+FROM eclipse-temurin:21-jre
+
 WORKDIR /app
 
-# Run as non-root user for container security
-RUN groupadd -r spring && useradd -r -g spring spring
-USER spring:spring
-
+# Copy generated JAR
 COPY --from=builder /app/target/*.jar app.jar
 
-ENV PORT=8080
-ENV SPRING_PROFILES_ACTIVE=prod
+# Spring Boot port
+EXPOSE 8081
 
-EXPOSE 8080
-
-HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-  CMD curl -f http://localhost:8080/actuator/health || exit 1
-
-ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
+# Start application
+ENTRYPOINT ["java", "-jar", "app.jar"]
