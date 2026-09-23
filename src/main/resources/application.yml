@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: AI-Powered CX Reply Assistant
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# SpringDoc OpenAPI Documentation
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    display-request-duration: true
+
+# Spring Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,flyway
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+    java:
+      enabled: true
+    os:
+      enabled: true
+
+# Application Specific Configurations (AI, Providers, Guardrails)
+app:
+  ai:
+    provider: openrouter # or deepinfra, openai
+    api-key: ${AI_API_KEY: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}
+    base-url: ${AI_BASE_URL:https://openrouter.ai/api/v1}
+    model: ${AI_MODEL:meta-llama/llama-3.3-70b-instruct}
+    temperature: 0.2
+    max-tokens: 600
+    guardrails:
+      enabled: true
+      strict-refund-check: true
+      strict-shipping-check: true
